@@ -30,7 +30,7 @@ class plane:
                         [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,1.0]])
         self.path = []
         self.visited = 0
-        self.in_bounds = 1
+        self.count = 0
     def predict(self, F):
         self.x = F.dot(self.x)
         self.P = F.dot((self.P).dot(F.transpose()))
@@ -108,21 +108,20 @@ I = np.array([[1,0,0,0,0,0,0,0,0],
                 [0,0,0,0,0,0,1,0,0],
                 [0,0,0,0,0,0,0,1,0],
                 [0,0,0,0,0,0,0,0,1]])
-for i in range(6000):
+for i in range(3000):
     print("Current is {} and i is {}".format(len(planes),i))
     for p in planes:
-        if p.in_bounds:
-            coordi = []
-            for k in range(3):
-                coordi.append((p.x)[k][0])
-            p.predict(F)
-            coordi = []
-            for k in range(3):
-                coordi.append((p.x)[k][0])
-            (p.path).append(coordi)
-            for k in range(3):
-                if coordi[k] > 1 or coordi[k] < -1:
-                    p.in_bounds = 0
+        p.count += 1
+        if p.count > 20 and p.visited == 0:
+            planes.remove(p)
+        coordi = []
+        for k in range(3):
+            coordi.append((p.x)[k][0])
+        p.predict(F)
+        coordi = []
+        for k in range(3):
+            coordi.append((p.x)[k][0])
+        (p.path).append(coordi)
 
     
     if data.iloc[i][0] == 0:
